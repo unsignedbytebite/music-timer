@@ -1,16 +1,17 @@
 [package]
 name = "music-timer"
 version = "0.1.1"
-authors = ["cj <cj>"]
+authors = ["cj <unsignedbytebite@gmail.com>"]
 edition = "2018"
 license = "MIT"
 readme = "README.md"
+documentation = "https://docs.rs/music-timer/0.1.1/music_timer/index.html"
 repository = "https://github.com/unsignedbytebite/music-timer"
 description = """
 music-timer is a crate with music time and counting utilities featuring a callback performance engine to help with triggering events in music time. Written in Rust.
 """
 keywords = ["music", "time", "state", "trigger"]
-categories = ["date and time", "multimedia::audio"]
+categories = ["date-and-time", "multimedia::audio"]
 autobenches = true
 
 [dependencies]
