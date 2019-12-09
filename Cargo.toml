@@ -5,9 +5,7 @@ authors = ["cj <cj>"]
 edition = "2018"
 license = "MIT"
 readme = "README.md"
-repository = ""
-documentation = ""
-homepage = ""
+repository = "https://github.com/unsignedbytebite/music-timer"
 description = """
 music-timer is a crate with music time and counting utilities featuring a callback performance engine to help with triggering events in music time. Written in Rust.
 """
