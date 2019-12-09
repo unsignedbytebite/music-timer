@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+/// Easy interface for changes in music time.
 use super::{
     music_time::MusicTime, music_time_counter::MusicTimeCounter, time_signature::TimeSignature,
 };

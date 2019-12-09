@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+/// Data structure of numerator(upper) and denominator(lower) values of music time signature
+
 #[derive(Clone, Copy, Debug)]
 /// Data structure of numerator(upper) and denominator(lower) values of music time signature
 pub struct TimeSignature {

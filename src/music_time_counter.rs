@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+/// Data structures that handles advancing music time within a time signature.
 use super::{music_time::MusicTime, time_signature::TimeSignature};
 use std::time::Duration;
 

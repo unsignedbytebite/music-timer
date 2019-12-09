@@ -90,7 +90,7 @@ pub mod music_time_counter;
 pub mod music_timer_engine;
 pub mod time_signature;
 
-/// Returns a person with the name given them
+/// Creates a new music timer performance engine.
 ///
 /// # Arguments
 ///
