@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 
-/// Data structure that holds music time and logic when advancing beats and beat intervals.
+//!
+//! Data structure that holds music time and logic when advancing beats and beat intervals.
+//!
+
 use super::time_signature::TimeSignature;
 use std::cmp::Ordering;
 

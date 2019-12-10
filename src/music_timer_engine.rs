@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 
-/// Easy interface for changes in music time.
+//!
+//! Easy interface for changes in music time.
+//!
+
 use super::{
     music_time::MusicTime, music_time_counter::MusicTimeCounter, time_signature::TimeSignature,
 };
@@ -38,7 +41,6 @@ pub struct MusicTimerEngine {
     previous_time: Duration,
     start_time: SystemTime,
     event_trigger_time: Duration,
-    event_drift_time: Duration,
     music_counter: MusicTimeCounter,
     event_trigger_target: Duration,
 }
@@ -63,7 +65,6 @@ impl MusicTimerEngine {
             previous_time: Duration::default(),
             start_time: SystemTime::now(),
             event_trigger_time: event_trigger_target,
-            event_drift_time: Duration::default(),
             music_counter,
             event_trigger_target,
         }
@@ -97,14 +98,14 @@ impl MusicTimerEngine {
     pub fn pulse<TimerState: MusicTimerState>(&mut self, state: &mut TimerState) {
         // Progress total time
         self.previous_time = self.total_time;
-
         // Time should never reverse else you're in trouble
         self.total_time = SystemTime::now()
             .duration_since(self.start_time)
             .expect(STRING_PANIC_TIME_FLOW);
 
         // Advance by delta
-        self.event_trigger_time += self.total_time - self.previous_time;
+        let time_delta = self.total_time - self.previous_time;
+        self.event_trigger_time += time_delta;
 
         // Check for an advance in the beat interval
         let is_beat_interval_advanced = self.event_trigger_time >= self.event_trigger_target;
@@ -129,7 +130,6 @@ impl MusicTimerEngine {
 
             // Reset and calibrate drift - https://www.youtube.com/watch?v=Gm7lcZiLOus&t=30s
             let initial_d = self.event_trigger_time - self.event_trigger_target;
-            self.event_drift_time = initial_d;
             self.event_trigger_time = initial_d;
         }
     }
@@ -153,5 +153,10 @@ impl MusicTimerEngine {
     ///
     pub fn get_beat_interval_duration(&self) -> Duration {
         self.event_trigger_target
+    }
+
+    /// Gets the current music time of the performance.
+    pub fn get_current_time(&self) -> &MusicTime {
+        self.music_counter.current_time()
     }
 }
