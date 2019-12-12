@@ -53,10 +53,38 @@ fn test_drift_60bpm() {
 
     while performer.get_current_time() < &end_time {
         performer.pulse(&mut performer_state);
-        thread::sleep(Duration::from_millis(1000 / 16));
+        thread::sleep(Duration::from_millis(1000 / 60));
     }
 
     let calculated_play_back_duration = performer.get_beat_interval_duration() * 8 * 4 * 2;
+    println!("calculated_play_back_duration: {:?}", calculated_play_back_duration);
+    let time_error_bound = Duration::from_millis(50);
+    let lower_bound = calculated_play_back_duration - time_error_bound;
+    let upper_bound = calculated_play_back_duration + time_error_bound;
+
+    assert!(
+        performer_state.total_time > lower_bound,
+        "Time is too slow"
+    );
+    assert!(performer_state.total_time < upper_bound, "Time was too fast");
+}
+
+
+#[test]
+fn test_drift_140bpm() {
+    use std::thread;
+
+    let mut performer = music_timer::create_performance_engine(3, 4, 140.0);
+    let mut performer_state = PerformanceState::new(performer.get_beat_interval_duration());
+    let end_time = MusicTime::new(3, 1, 1);
+
+    while performer.get_current_time() < &end_time {
+        performer.pulse(&mut performer_state);
+        thread::sleep(Duration::from_millis(1000 / 60));
+    }
+
+    let calculated_play_back_duration = performer.get_beat_interval_duration() * 8 * 3 * 2;
+    println!("calculated_play_back_duration: {:?}", calculated_play_back_duration);
     let time_error_bound = Duration::from_millis(50);
     let lower_bound = calculated_play_back_duration - time_error_bound;
     let upper_bound = calculated_play_back_duration + time_error_bound;
