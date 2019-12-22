@@ -43,6 +43,7 @@ pub struct MusicTimerEngine {
     event_trigger_time: Duration,
     music_counter: MusicTimeCounter,
     event_trigger_target: Duration,
+    previous_music_time: MusicTime,
 }
 
 impl MusicTimerEngine {
@@ -67,6 +68,7 @@ impl MusicTimerEngine {
             event_trigger_time: event_trigger_target,
             music_counter,
             event_trigger_target,
+            previous_music_time: MusicTime::new(0, 0, 0),
         }
     }
 
@@ -110,23 +112,25 @@ impl MusicTimerEngine {
         // Check for an advance in the beat interval
         let is_beat_interval_advanced = self.event_trigger_time >= self.event_trigger_target;
         if is_beat_interval_advanced {
-            let cache_time = self.music_counter.current_time().clone();
-            state.on_beat_interval(&cache_time);
+            let cached_current_time = self.music_counter.current_time().clone();
+            state.on_beat_interval(&cached_current_time);
 
             let now_time = {
                 self.music_counter.advance_beat_interval();
                 self.music_counter.current_time()
             };
 
-            let is_beat_changed = cache_time.get_beat() != now_time.get_beat();
+            let is_beat_changed = self.previous_music_time.get_beat() != now_time.get_beat();
             if is_beat_changed {
                 state.on_beat(&now_time);
             }
 
-            let is_bar_changed = cache_time.get_bar() != now_time.get_bar();
+            let is_bar_changed = self.previous_music_time.get_bar() == now_time.get_bar();
             if is_bar_changed {
                 state.on_bar(&now_time);
             }
+
+            self.previous_music_time = self.music_counter.current_time().clone();
 
             // Reset and calibrate drift - https://www.youtube.com/watch?v=Gm7lcZiLOus&t=30s
             let initial_d = self.event_trigger_time - self.event_trigger_target;
@@ -158,5 +162,14 @@ impl MusicTimerEngine {
     /// Gets the current music time of the performance.
     pub fn get_current_time(&self) -> &MusicTime {
         self.music_counter.current_time()
+    }
+
+    /// Sets the current music time.
+    ///
+    /// # Arguments
+    /// * `time` - The new music time to set.
+    pub fn set_music_timer(&mut self, time: MusicTime) -> &mut Self {
+        self.music_counter.set_current_time(time);
+        self
     }
 }

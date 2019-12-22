@@ -27,7 +27,7 @@ impl MusicTimeCounter {
     /// ```
     pub fn new(time_signature: TimeSignature) -> Self {
         MusicTimeCounter {
-            current_time: MusicTime::new(0, time_signature.get_numerator(), 8),
+            current_time: MusicTime::new(1, 1, 1),
             time_signature,
         }
     }
@@ -68,6 +68,15 @@ impl MusicTimeCounter {
         let beat_interval_pulse_speed = seconds_per_beat_interval * 1000000000.0;
         Duration::from_nanos(beat_interval_pulse_speed as u64)
     }
+
+    /// Set the current music time of the counter.
+    ///
+    /// # Arguments
+    /// * `current_time` - The new current time to set counter to.
+    pub fn set_current_time(&mut self, current_time: MusicTime) -> &mut Self {
+        self.current_time = current_time;
+        self
+    }
 }
 
 impl Default for MusicTimeCounter {
@@ -96,4 +105,14 @@ fn test_beat_interval_target_frames() {
     let duration = timer.beat_interval_target_frames(60.0);
     let expected = Duration::from_millis(125);
     assert_eq!(duration, expected);
+}
+
+#[test]
+fn test_set_current_time() {
+    let mut timer = MusicTimeCounter::default();
+    assert_eq!(timer.current_time(), &MusicTime::new(1, 1, 1));
+    timer.advance_beat();
+    assert_eq!(timer.current_time(), &MusicTime::new(1, 2, 1));
+    timer.set_current_time(MusicTime::new(3, 2, 1));
+    assert_eq!(timer.current_time(), &MusicTime::new(3, 2, 1));
 }
