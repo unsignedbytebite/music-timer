@@ -112,25 +112,26 @@ impl MusicTimerEngine {
         // Check for an advance in the beat interval
         let is_beat_interval_advanced = self.event_trigger_time >= self.event_trigger_target;
         if is_beat_interval_advanced {
-            let cached_current_time = self.music_counter.current_time().clone();
-            state.on_beat_interval(&cached_current_time);
+            let current_time = self.music_counter.current_time();
 
-            let now_time = {
-                self.music_counter.advance_beat_interval();
-                self.music_counter.current_time()
-            };
+            // On beat interval change
+            state.on_beat_interval(&current_time);
 
-            let is_beat_changed = self.previous_music_time.get_beat() != now_time.get_beat();
+            // On beat change
+            let is_beat_changed = self.previous_music_time.get_beat() != self.music_counter.current_time().get_beat();
             if is_beat_changed {
-                state.on_beat(&now_time);
+                state.on_beat(&current_time);
             }
 
-            let is_bar_changed = self.previous_music_time.get_bar() == now_time.get_bar();
+            // On bar change
+            let is_bar_changed = self.previous_music_time.get_bar() != self.music_counter.current_time().get_bar();
             if is_bar_changed {
-                state.on_bar(&now_time);
+                state.on_bar(&current_time);
             }
 
+            // Advance and store time
             self.previous_music_time = self.music_counter.current_time().clone();
+            self.music_counter.advance_beat_interval();
 
             // Reset and calibrate drift - https://www.youtube.com/watch?v=Gm7lcZiLOus&t=30s
             let initial_d = self.event_trigger_time - self.event_trigger_target;

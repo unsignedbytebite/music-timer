@@ -52,33 +52,33 @@ fn performance_runner(
 #[test]
 fn test_performance_example() {
     let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 3, 7);
+    let end_time = MusicTime::new(4, 3, 8);
     performance_runner((3, 4, 155), &mut performer_state, end_time);
 
     assert_eq!(performer_state.current_time, end_time);
-    assert_eq!(performer_state.count_bars, 4);
-    assert_eq!(performer_state.count_beats, 3 * 4);
     assert_eq!(performer_state.count_beat_intervals, 8 * 3 * 4);
+    assert_eq!(performer_state.count_beats, 3 * 4);
+    assert_eq!(performer_state.count_bars, 4);
 }
 #[test]
 fn test_standard() {
     let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 4, 7);
+    let end_time = MusicTime::new(4, 4, 8);
     performance_runner((4, 4, 120), &mut performer_state, end_time);
 
     assert_eq!(performer_state.current_time, end_time);
-    assert_eq!(performer_state.count_bars, 4);
-    assert_eq!(performer_state.count_beats, 4 * 4);
     assert_eq!(performer_state.count_beat_intervals, 8 * 4 * 4);
+    assert_eq!(performer_state.count_beats, 4 * 4);
+    assert_eq!(performer_state.count_bars, 4);
 }
 #[test]
 fn test_odd() {
     let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 7, 7);
+    let end_time = MusicTime::new(4, 7, 8);
     performance_runner((7, 8, 120), &mut performer_state, end_time);
 
     assert_eq!(performer_state.current_time, end_time);
-    assert_eq!(performer_state.count_bars, 4);
-    assert_eq!(performer_state.count_beats, 7 * 4);
     assert_eq!(performer_state.count_beat_intervals, 8 * 7 * 4);
+    assert_eq!(performer_state.count_beats, 7 * 4);
+    assert_eq!(performer_state.count_bars, 4);
 }

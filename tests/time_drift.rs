@@ -6,7 +6,6 @@ struct PerformanceState {
     previous_time: Duration,
     total_time: Duration,
     target_sleep_duration: Duration,
-    // event_trigger_time: Duration,
 }
 
 impl PerformanceState {
@@ -51,7 +50,7 @@ fn test_drift_60bpm() {
     let mut performer_state = PerformanceState::new(performer.get_beat_interval_duration());
     let end_time = MusicTime::new(3, 1, 1);
 
-    while performer.get_current_time() < &end_time {
+    while performer.get_current_time() <= &end_time {
         performer.pulse(&mut performer_state);
         thread::sleep(Duration::from_millis(1000 / 60));
     }
@@ -78,7 +77,7 @@ fn test_drift_140bpm() {
     let mut performer_state = PerformanceState::new(performer.get_beat_interval_duration());
     let end_time = MusicTime::new(3, 1, 1);
 
-    while performer.get_current_time() < &end_time {
+    while performer.get_current_time() <= &end_time {
         performer.pulse(&mut performer_state);
         thread::sleep(Duration::from_millis(1000 / 60));
     }
