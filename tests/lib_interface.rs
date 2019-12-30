@@ -5,45 +5,54 @@ struct PerformanceState {
     count_bars: u8,
     count_beats: u8,
     count_beat_intervals: u8,
+    end_time: MusicTime,
+    is_playing: bool,
 }
 
 impl PerformanceState {
-    fn new() -> Self {
+    fn new(end_time: MusicTime) -> Self {
         PerformanceState {
             current_time: MusicTime::default(),
             count_bars: 0,
             count_beats: 0,
             count_beat_intervals: 0,
+            end_time,
+            is_playing: true,
         }
     }
 }
 
 impl MusicTimerState for PerformanceState {
     fn on_beat_interval(&mut self, now_time: &MusicTime) {
-        self.current_time = now_time.clone();
-        self.count_beat_intervals += 1;
+        if now_time == &self.end_time {
+            self.is_playing = false;
+        } else {
+            self.current_time = now_time.clone();
+            self.count_beat_intervals += 1;
+        }
+            println!(">> {:?}", self.current_time);
     }
     fn on_beat(&mut self, now_time: &MusicTime) {
         self.current_time = now_time.clone();
         self.count_beats += 1;
+            println!(">2 {:?}", self.current_time);
+    
     }
     fn on_bar(&mut self, now_time: &MusicTime) {
         self.current_time = now_time.clone();
         self.count_bars += 1;
+            println!(">3 {:?}", self.current_time);
+    
     }
 }
 
-fn performance_runner(
-    time_bpm: (u8, u8, u8),
-    performer_state: &mut PerformanceState,
-    end_time: MusicTime,
-) {
+fn performance_runner(time_bpm: (u8, u8, u8), performer_state: &mut PerformanceState) {
     use std::thread;
 
     let mut performer =
         music_timer::create_performance_engine(time_bpm.0, time_bpm.1, time_bpm.2 as f32);
     let sleep_duration = performer.get_beat_interval_duration() / 2;
-    while performer_state.current_time < end_time {
+    while performer_state.is_playing {
         performer.pulse(performer_state);
         thread::sleep(sleep_duration);
     }
@@ -51,9 +60,9 @@ fn performance_runner(
 
 #[test]
 fn test_performance_example() {
-    let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 3, 7);
-    performance_runner((3, 4, 155), &mut performer_state, end_time);
+    let end_time = MusicTime::new(4, 3, 8);
+    let mut performer_state = PerformanceState::new(end_time);
+    performance_runner((3, 4, 155), &mut performer_state);
 
     assert_eq!(performer_state.current_time, end_time);
     assert_eq!(performer_state.count_bars, 4);
@@ -62,9 +71,9 @@ fn test_performance_example() {
 }
 #[test]
 fn test_standard() {
-    let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 4, 7);
-    performance_runner((4, 4, 120), &mut performer_state, end_time);
+    let end_time = MusicTime::new(4, 4, 8);
+    let mut performer_state = PerformanceState::new(end_time);
+    performance_runner((4, 4, 120), &mut performer_state);
 
     assert_eq!(performer_state.current_time, end_time);
     assert_eq!(performer_state.count_bars, 4);
@@ -73,9 +82,9 @@ fn test_standard() {
 }
 #[test]
 fn test_odd() {
-    let mut performer_state = PerformanceState::new();
-    let end_time = MusicTime::new(4, 7, 7);
-    performance_runner((7, 8, 120), &mut performer_state, end_time);
+    let end_time = MusicTime::new(4, 7, 8);
+    let mut performer_state = PerformanceState::new(end_time);
+    performance_runner((7, 8, 120), &mut performer_state);
 
     assert_eq!(performer_state.current_time, end_time);
     assert_eq!(performer_state.count_bars, 4);

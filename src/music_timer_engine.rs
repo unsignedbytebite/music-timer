@@ -97,7 +97,7 @@ impl MusicTimerEngine {
     /// let mut performer = music_timer::create_performance_engine(3, 4, 155.0);
     /// performer.pulse(&mut performer_state);
     /// ```
-    pub fn pulse<TimerState: MusicTimerState>(&mut self, state: &mut TimerState) {
+    pub fn pulse<TimerState: MusicTimerState>(&mut self, state: &mut TimerState, end_time: &MusicTime) {
         // Progress total time
         self.previous_time = self.total_time;
         // Time should never reverse else you're in trouble
@@ -125,7 +125,7 @@ impl MusicTimerEngine {
                 state.on_beat(&now_time);
             }
 
-            let is_bar_changed = self.previous_music_time.get_bar() == now_time.get_bar();
+            let is_bar_changed = self.previous_music_time.get_bar() != now_time.get_bar();
             if is_bar_changed {
                 state.on_bar(&now_time);
             }
