@@ -56,19 +56,18 @@ fn test_drift_60bpm() {
         thread::sleep(Duration::from_millis(1000 / 60));
     }
 
-    let calculated_play_back_duration = performer.get_beat_interval_duration() * 8 * 4 * 2;
-    println!("calculated_play_back_duration: {:?}", calculated_play_back_duration);
+    let calculated_play_back_duration = (performer.get_beat_interval_duration() * 8 * 4 * 2)
+        - performer_state.target_sleep_duration;
     let time_error_bound = Duration::from_millis(50);
     let lower_bound = calculated_play_back_duration - time_error_bound;
     let upper_bound = calculated_play_back_duration + time_error_bound;
+    let total_time = performer_state.total_time;
 
-    assert!(
-        performer_state.total_time > lower_bound,
-        "Time is too slow"
-    );
-    assert!(performer_state.total_time < upper_bound, "Time was too fast");
+    println!("{:?} <> {:?} - {:?}", total_time, lower_bound, upper_bound);
+
+    assert!(total_time > lower_bound, "Time was too fast");
+    assert!(total_time < upper_bound, "Time is too slow");
 }
-
 
 #[test]
 fn test_drift_140bpm() {
@@ -83,15 +82,15 @@ fn test_drift_140bpm() {
         thread::sleep(Duration::from_millis(1000 / 60));
     }
 
-    let calculated_play_back_duration = performer.get_beat_interval_duration() * 8 * 3 * 2;
-    println!("calculated_play_back_duration: {:?}", calculated_play_back_duration);
+    let calculated_play_back_duration = (performer.get_beat_interval_duration() * 8 * 3 * 2)
+        - performer_state.target_sleep_duration;
     let time_error_bound = Duration::from_millis(50);
     let lower_bound = calculated_play_back_duration - time_error_bound;
     let upper_bound = calculated_play_back_duration + time_error_bound;
+    let total_time = performer_state.total_time;
 
-    assert!(
-        performer_state.total_time > lower_bound,
-        "Time is too slow"
-    );
-    assert!(performer_state.total_time < upper_bound, "Time was too fast");
+    println!("{:?} <> {:?} - {:?}", total_time, lower_bound, upper_bound);
+
+    assert!(total_time > lower_bound, "Time was too fast");
+    assert!(total_time < upper_bound, "Time is too slow");
 }

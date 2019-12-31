@@ -97,7 +97,7 @@ impl MusicTimerEngine {
     /// let mut performer = music_timer::create_performance_engine(3, 4, 155.0);
     /// performer.pulse(&mut performer_state);
     /// ```
-    pub fn pulse<TimerState: MusicTimerState>(&mut self, state: &mut TimerState, end_time: &MusicTime) {
+    pub fn pulse<TimerState: MusicTimerState>(&mut self, state: &mut TimerState) {
         // Progress total time
         self.previous_time = self.total_time;
         // Time should never reverse else you're in trouble
@@ -113,6 +113,7 @@ impl MusicTimerEngine {
         let is_beat_interval_advanced = self.event_trigger_time >= self.event_trigger_target;
         if is_beat_interval_advanced {
             let cached_current_time = self.music_counter.current_time().clone();
+            self.previous_music_time = self.music_counter.current_time().clone();
             state.on_beat_interval(&cached_current_time);
 
             let now_time = {
@@ -120,17 +121,15 @@ impl MusicTimerEngine {
                 self.music_counter.current_time()
             };
 
-            let is_beat_changed = self.previous_music_time.get_beat() != now_time.get_beat();
+            let is_beat_changed = cached_current_time.get_beat() != now_time.get_beat();
             if is_beat_changed {
-                state.on_beat(&now_time);
+                state.on_beat(&cached_current_time);
             }
 
-            let is_bar_changed = self.previous_music_time.get_bar() != now_time.get_bar();
+            let is_bar_changed = cached_current_time.get_bar() != now_time.get_bar();
             if is_bar_changed {
-                state.on_bar(&now_time);
+                state.on_bar(&cached_current_time);
             }
-
-            self.previous_music_time = self.music_counter.current_time().clone();
 
             // Reset and calibrate drift - https://www.youtube.com/watch?v=Gm7lcZiLOus&t=30s
             let initial_d = self.event_trigger_time - self.event_trigger_target;
