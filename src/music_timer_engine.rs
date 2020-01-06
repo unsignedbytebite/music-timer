@@ -167,7 +167,7 @@ impl MusicTimerEngine {
     ///
     /// # Arguments
     /// * `time` - The new music time to set.
-    pub fn set_music_timer(&mut self, time: MusicTime) -> &mut Self {
+    pub fn set_current_time(&mut self, time: MusicTime) -> &mut Self {
         self.music_counter.set_current_time(time);
         self
     }
