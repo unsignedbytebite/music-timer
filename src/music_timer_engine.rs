@@ -108,28 +108,27 @@ impl MusicTimerEngine {
         // Advance by delta
         let time_delta = self.total_time - self.previous_time;
         self.event_trigger_time += time_delta;
-
         // Check for an advance in the beat interval
         let is_beat_interval_advanced = self.event_trigger_time >= self.event_trigger_target;
         if is_beat_interval_advanced {
-            let cached_current_time = self.music_counter.current_time().clone();
-            self.previous_music_time = self.music_counter.current_time().clone();
-            state.on_beat_interval(&cached_current_time);
+            let now_time = self.music_counter.current_time();
+            let previous_time = self.previous_music_time;
 
-            let now_time = {
-                self.music_counter.advance_beat_interval();
-                self.music_counter.current_time()
-            };
-
-            let is_beat_changed = cached_current_time.get_beat() != now_time.get_beat();
+            state.on_beat_interval(&now_time);
+            let is_beat_changed = now_time.get_beat() != previous_time.get_beat();
             if is_beat_changed {
-                state.on_beat(&cached_current_time);
+                state.on_beat(&now_time);
             }
 
-            let is_bar_changed = cached_current_time.get_bar() != now_time.get_bar();
+            let is_bar_changed = now_time.get_bar() != previous_time.get_bar();
             if is_bar_changed {
-                state.on_bar(&cached_current_time);
+                state.on_bar(&now_time);
             }
+
+            // Advance time
+            self.previous_music_time = now_time.clone();
+            self.music_counter.advance_beat_interval();
+            self.music_counter.current_time();
 
             // Reset and calibrate drift - https://www.youtube.com/watch?v=Gm7lcZiLOus&t=30s
             let initial_d = self.event_trigger_time - self.event_trigger_target;
