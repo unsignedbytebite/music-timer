@@ -86,33 +86,43 @@ impl Default for MusicTimeCounter {
     }
 }
 
-#[test]
-fn test_beat_target_frames() {
-    let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
-    let duration = timer.beat_target_frames(80.0);
-    let expected = Duration::from_millis(750);
-    assert_eq!(duration, expected);
+mod tests {
+    #[test]
+    fn test_beat_target_frames() {
+        use crate::{music_time_counter::MusicTimeCounter, time_signature::TimeSignature};
+        use std::time::Duration;
 
-    let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
-    let duration = timer.beat_target_frames(60.0);
-    let expected = Duration::from_secs(1);
-    assert_eq!(duration, expected);
-}
+        let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
+        let duration = timer.beat_target_frames(80.0);
+        let expected = Duration::from_millis(750);
+        assert_eq!(duration, expected);
 
-#[test]
-fn test_beat_interval_target_frames() {
-    let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
-    let duration = timer.beat_interval_target_frames(60.0);
-    let expected = Duration::from_millis(125);
-    assert_eq!(duration, expected);
-}
+        let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
+        let duration = timer.beat_target_frames(60.0);
+        let expected = Duration::from_secs(1);
+        assert_eq!(duration, expected);
+    }
 
-#[test]
-fn test_set_current_time() {
-    let mut timer = MusicTimeCounter::default();
-    assert_eq!(timer.current_time(), &MusicTime::new(1, 1, 1));
-    timer.advance_beat();
-    assert_eq!(timer.current_time(), &MusicTime::new(1, 2, 1));
-    timer.set_current_time(MusicTime::new(3, 2, 1));
-    assert_eq!(timer.current_time(), &MusicTime::new(3, 2, 1));
+    #[test]
+    fn test_beat_interval_target_frames() {
+        use crate::{music_time_counter::MusicTimeCounter, time_signature::TimeSignature};
+        use std::time::Duration;
+
+        let timer = MusicTimeCounter::new(TimeSignature::new(4, 4));
+        let duration = timer.beat_interval_target_frames(60.0);
+        let expected = Duration::from_millis(125);
+        assert_eq!(duration, expected);
+    }
+
+    #[test]
+    fn test_set_current_time() {
+        use crate::{music_time::MusicTime, music_time_counter::MusicTimeCounter};
+
+        let mut timer = MusicTimeCounter::default();
+        assert_eq!(timer.current_time(), &MusicTime::new(1, 1, 1));
+        timer.advance_beat();
+        assert_eq!(timer.current_time(), &MusicTime::new(1, 2, 1));
+        timer.set_current_time(MusicTime::new(3, 2, 1));
+        assert_eq!(timer.current_time(), &MusicTime::new(3, 2, 1));
+    }
 }

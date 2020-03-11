@@ -75,20 +75,24 @@ impl Default for TimeSignature {
     }
 }
 
-#[test]
-fn test_valid() {
-    assert_eq!(TimeSignature::default().is_valid(), true);
-    assert_eq!(TimeSignature::new(4, 5).is_valid(), false);
-    assert_eq!(TimeSignature::new(0, 2).is_valid(), false);
-}
+mod tests {
+    #[test]
+    fn test_valid() {
+        use crate::time_signature::TimeSignature;
+        assert_eq!(TimeSignature::default().is_valid(), true);
+        assert_eq!(TimeSignature::new(4, 5).is_valid(), false);
+        assert_eq!(TimeSignature::new(0, 2).is_valid(), false);
+    }
 
-#[test]
-fn test_equality() {
-    let a = TimeSignature::default();
-    let b = TimeSignature::new(4, 4);
-    assert_eq!(a, b);
+    #[test]
+    fn test_equality() {
+        use crate::time_signature::TimeSignature;
+        let a = TimeSignature::default();
+        let b = TimeSignature::new(4, 4);
+        assert_eq!(a, b);
 
-    let a = TimeSignature::new(3, 4);
-    let b = TimeSignature::new(4, 4);
-    assert_ne!(a, b);
+        let a = TimeSignature::new(3, 4);
+        let b = TimeSignature::new(4, 4);
+        assert_ne!(a, b);
+    }
 }

@@ -143,93 +143,102 @@ impl Default for MusicTime {
     }
 }
 
-#[test]
-fn test_order() {
-    assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(2, 1, 1), true);
-    assert_eq!(MusicTime::new(2, 1, 1) > MusicTime::new(1, 1, 1), true);
-    assert_eq!(MusicTime::new(1, 1, 1) <= MusicTime::new(1, 1, 1), true);
-    assert_eq!(MusicTime::new(1, 1, 1) >= MusicTime::new(1, 1, 1), true);
+mod tests {
+    #[test]
+    fn test_order() {
+        use crate::music_time::MusicTime;
 
-    assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 2, 1), true);
-    assert_eq!(MusicTime::new(1, 2, 1) > MusicTime::new(1, 1, 1), true);
-    assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 2, 1), true);
-    assert_eq!(MusicTime::new(1, 2, 1) > MusicTime::new(1, 1, 1), true);
+        assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(2, 1, 1), true);
+        assert_eq!(MusicTime::new(2, 1, 1) > MusicTime::new(1, 1, 1), true);
+        assert_eq!(MusicTime::new(1, 1, 1) <= MusicTime::new(1, 1, 1), true);
+        assert_eq!(MusicTime::new(1, 1, 1) >= MusicTime::new(1, 1, 1), true);
 
-    assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 1, 2), true);
-    assert_eq!(MusicTime::new(1, 1, 2) > MusicTime::new(1, 1, 1), true);
-    assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 1, 2), true);
-    assert_eq!(MusicTime::new(1, 1, 2) > MusicTime::new(1, 1, 1), true);
-}
+        assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 2, 1), true);
+        assert_eq!(MusicTime::new(1, 2, 1) > MusicTime::new(1, 1, 1), true);
+        assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 2, 1), true);
+        assert_eq!(MusicTime::new(1, 2, 1) > MusicTime::new(1, 1, 1), true);
 
-#[test]
-fn test_equality() {
-    let a = MusicTime::new(1, 2, 3);
-    let b = MusicTime::new(1, 2, 3);
-    assert_eq!(a == b, true);
+        assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 1, 2), true);
+        assert_eq!(MusicTime::new(1, 1, 2) > MusicTime::new(1, 1, 1), true);
+        assert_eq!(MusicTime::new(1, 1, 1) < MusicTime::new(1, 1, 2), true);
+        assert_eq!(MusicTime::new(1, 1, 2) > MusicTime::new(1, 1, 1), true);
+    }
 
-    let a = MusicTime::default();
-    let b: MusicTime = Default::default();
-    assert_eq!(a == b, true);
-    assert_eq!(a.get_bar() == 1 && b.get_bar() == 1, true);
+    #[test]
+    fn test_equality() {
+        use crate::music_time::MusicTime;
 
-    let a = MusicTime::new(2, 1, 1);
-    let b = MusicTime::new(2, 3, 2);
-    assert_eq!(a == b, false);
-}
+        let a = MusicTime::new(1, 2, 3);
+        let b = MusicTime::new(1, 2, 3);
+        assert_eq!(a == b, true);
 
-#[test]
-fn test_advance() {
-    let time_signature = TimeSignature::new(4, 4);
-    let mut a = MusicTime::default();
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 2, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 3, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 4, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
+        let a = MusicTime::default();
+        let b: MusicTime = Default::default();
+        assert_eq!(a == b, true);
+        assert_eq!(a.get_bar() == 1 && b.get_bar() == 1, true);
 
-    let time_signature = TimeSignature::new(3, 4);
-    let mut a = MusicTime::default();
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 2, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 3, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 2 && a.get_beat() == 2, true);
+        let a = MusicTime::new(2, 1, 1);
+        let b = MusicTime::new(2, 3, 2);
+        assert_eq!(a == b, false);
+    }
 
-    let time_signature = TimeSignature::new(1, 4);
-    let mut a = MusicTime::default();
-    assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 3 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 4 && a.get_beat() == 1, true);
-    a.advance_beat(&time_signature);
-    assert_eq!(a.get_bar() == 5 && a.get_beat() == 1, true);
-}
+    #[test]
+    fn test_advance() {
+        use crate::{music_time::MusicTime, time_signature::TimeSignature};
 
-#[test]
-fn test_advance_beat_interval() {
-    let time_signature = TimeSignature::new(4, 4);
-    let mut a = MusicTime::default();
-    assert_eq!(a, MusicTime::new(1, 1, 1));
-    a.advance_beat_interval(&time_signature);
-    assert_eq!(a, MusicTime::new(1, 1, 2));
-    a.advance_beat_interval(&time_signature);
-    a.advance_beat_interval(&time_signature);
-    a.advance_beat_interval(&time_signature);
-    a.advance_beat_interval(&time_signature);
-    a.advance_beat_interval(&time_signature);
-    a.advance_beat_interval(&time_signature);
-    assert_eq!(a, MusicTime::new(1, 1, 8));
-    a.advance_beat_interval(&time_signature);
-    assert_eq!(a, MusicTime::new(1, 2, 1));
+        let time_signature = TimeSignature::new(4, 4);
+        let mut a = MusicTime::default();
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 2, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 3, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 4, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
+
+        let time_signature = TimeSignature::new(3, 4);
+        let mut a = MusicTime::default();
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 2, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 3, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 2 && a.get_beat() == 2, true);
+
+        let time_signature = TimeSignature::new(1, 4);
+        let mut a = MusicTime::default();
+        assert_eq!(a.get_bar() == 1 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 2 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 3 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 4 && a.get_beat() == 1, true);
+        a.advance_beat(&time_signature);
+        assert_eq!(a.get_bar() == 5 && a.get_beat() == 1, true);
+    }
+
+    #[test]
+    fn test_advance_beat_interval() {
+        use crate::{music_time::MusicTime, time_signature::TimeSignature};
+        let time_signature = TimeSignature::new(4, 4);
+        let mut a = MusicTime::default();
+        assert_eq!(a, MusicTime::new(1, 1, 1));
+        a.advance_beat_interval(&time_signature);
+        assert_eq!(a, MusicTime::new(1, 1, 2));
+        a.advance_beat_interval(&time_signature);
+        a.advance_beat_interval(&time_signature);
+        a.advance_beat_interval(&time_signature);
+        a.advance_beat_interval(&time_signature);
+        a.advance_beat_interval(&time_signature);
+        a.advance_beat_interval(&time_signature);
+        assert_eq!(a, MusicTime::new(1, 1, 8));
+        a.advance_beat_interval(&time_signature);
+        assert_eq!(a, MusicTime::new(1, 2, 1));
+    }
 }
