@@ -2,7 +2,7 @@
 
 _Music Timer_ is a crate with music time and counting utilities featuring a callback performance engine to help with triggering events in music time. Written in Rust.
 
-The engine uses all of this crate's utilities to allow to use of a music performance state system that triggers callbacks. Its aims are to allow for an easy interface for changes in music time. 
+Its aims are to allow for an easy interface to trigger events in music time. This crate does not feature any threading. 
 
 ## Performance engine
 
