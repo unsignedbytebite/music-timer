@@ -241,4 +241,30 @@ mod tests {
         a.advance_beat_interval(&time_signature);
         assert_eq!(a, MusicTime::new(1, 2, 1));
     }
+
+    #[test]
+    fn test_event_sort() {
+        use crate::music_time::MusicTime;
+
+        let mut events = vec![
+            (MusicTime::new(2, 1, 1), vec![0]),
+            (MusicTime::new(1, 1, 1), vec![0]),
+            (MusicTime::new(4, 1, 1), vec![0]),
+            (MusicTime::new(3, 1, 1), vec![0]),
+            (MusicTime::new(3, 4, 1), vec![0]),
+        ];
+
+        events.sort_by(|a, b| a.0.cmp(&b.0));
+
+        assert_eq!(
+            events,
+            vec![
+                (MusicTime::new(1, 1, 1), vec![0]),
+                (MusicTime::new(2, 1, 1), vec![0]),
+                (MusicTime::new(3, 1, 1), vec![0]),
+                (MusicTime::new(3, 4, 1), vec![0]),
+                (MusicTime::new(4, 1, 1), vec![0]),
+            ]
+        );
+    }
 }
